@@ -1,0 +1,14 @@
+com\example\studentplacement\model\Application.class
+com\example\studentplacement\model\User.class
+com\example\studentplacement\service\JobService.class
+com\example\studentplacement\repository\UserRepository.class
+com\example\studentplacement\controller\AuthController.class
+com\example\studentplacement\repository\ApplicationRepository.class
+com\example\studentplacement\controller\JobController.class
+com\example\studentplacement\config\WebConfig.class
+com\example\studentplacement\repository\JobRepository.class
+com\example\studentplacement\StudentPlacementApplication.class
+com\example\studentplacement\service\ApplicationService.class
+com\example\studentplacement\config\SecurityConfig.class
+com\example\studentplacement\controller\StudentDashboardController.class
+com\example\studentplacement\model\Job.class
