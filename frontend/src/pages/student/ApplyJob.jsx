@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Briefcase, MapPin, DollarSign, Send, ArrowLeft, FileText, Phone, User, Mail, Link as LinkIcon, Upload, CheckCircle, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { BASE_URL } from '../../utils/api';
 
 const ApplyJob = () => {
     const { isCurrentDesign, toggleTheme } = useTheme();
@@ -27,7 +28,7 @@ const ApplyJob = () => {
             try {
                 // In a real app, you'd fetch specific job details
                 // For now, we'll fetch all and find the one from the list or a specific endpoint
-                const response = await fetch(`/api/jobs/available/${userId}`);
+                const response = await fetch(`${BASE_URL}/api/jobs/available/${userId}`);
                 if (response.ok) {
                     const jobs = await response.json();
                     const foundJob = jobs.find(j => j.id.toString() === jobId.toString());
@@ -62,7 +63,7 @@ const ApplyJob = () => {
 
         try {
             console.log("Submitting application via FormData...");
-            const response = await fetch('/api/applications/apply', {
+            const response = await fetch(`${BASE_URL}/api/applications/apply`, {
                 method: 'POST',
                 body: data, // No Content-Type header! Browser sets it automatically for FormData
             });
