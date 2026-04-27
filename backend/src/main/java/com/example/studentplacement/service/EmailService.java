@@ -3,10 +3,14 @@ package com.example.studentplacement.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
+    @Value("${spring.mail.from}")
+    private String fromEmail;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -14,7 +18,7 @@ public class EmailService {
     public void sendRegistrationEmail(String toEmail, String fullName) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("chakradharraddy6@gmail.com");
+            message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("Registration Successful - Bridge Placement Portal");
             message.setText("Dear " + fullName + ",\n\n" +
@@ -35,7 +39,7 @@ public class EmailService {
     public void sendOTPEmail(String toEmail, String otp) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("chakradharraddy6@gmail.com");
+            message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject("OTP Verification Code - Bridge Placement Portal");
             message.setText("Dear User,\n\n" +

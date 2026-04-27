@@ -133,6 +133,17 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public void resetPassword(String email, String encodedPassword) {
+        Optional<User> userOptional = userRepository.findByUsername(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(encodedPassword);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+    }
+
     public User save(User user) {
         return userRepository.save(user);
     }

@@ -3,6 +3,7 @@ package com.example.studentplacement.controller;
 import com.example.studentplacement.model.User;
 import com.example.studentplacement.service.UserService;
 import com.example.studentplacement.service.OTPService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class AuthController {
 
     @Autowired
     private OTPService otpService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest) {
@@ -78,6 +82,38 @@ public class AuthController {
                 return ResponseEntity.status(400).body(response);
             }
             response.put("message", "Registration failed: " + errorMessage);
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String otp = request.get("otp");
+        String newPassword = request.get("newPassword");
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            if (email == null || otp == null || newPassword == null) {
+                response.put("message", "All fields are required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Verify OTP
+            if (!otpService.validateOTP(email, otp)) {
+                response.put("message", "Invalid or expired verification code!");
+                return ResponseEntity.status(400).body(response);
+            }
+
+            // Update Password
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            userService.resetPassword(email, encodedPassword);
+
+            response.put("message", "Password reset successful!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("message", "Failed to reset password: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }

@@ -39,15 +39,15 @@ public class ApplicationController {
             @RequestParam(value = "portfolioUrl", required = false) String portfolioUrl,
             @RequestParam("resume") org.springframework.web.multipart.MultipartFile resume) {
 
-        Optional<User> student = userService.findById(studentId);
-        Optional<Job> job = jobService.getJobById(jobId);
-
-        if (student.isPresent() && job.isPresent()) {
-            try {
+        try {
+            Optional<User> student = userService.findById(studentId);
+            Optional<Job> job = jobService.getJobById(jobId);
+    
+            if (student.isPresent() && job.isPresent()) {
                 byte[] resumeData = resume.getBytes();
                 String resumeName = resume.getOriginalFilename();
                 String resumeType = resume.getContentType();
-
+    
                 return ResponseEntity.ok(applicationService.apply(
                         student.get(), 
                         job.get(), 
@@ -58,11 +58,12 @@ public class ApplicationController {
                         resumeName, 
                         resumeType, 
                         resumeData));
-            } catch (java.io.IOException e) {
-                return ResponseEntity.internalServerError().build();
+            } else {
+                return ResponseEntity.status(400).body(null);
             }
-        } else {
-            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
     }
 

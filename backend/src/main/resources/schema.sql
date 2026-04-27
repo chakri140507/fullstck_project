@@ -5,11 +5,14 @@ USE student_placement;
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(100),
     role VARCHAR(20) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     resume_url VARCHAR(255),
-    approved BIT(1) DEFAULT 0
+    approved BIT(1) DEFAULT 0,
+    auth_provider VARCHAR(20),
+    provider_id VARCHAR(100)
 );
 
 -- Ensure jobs table has correct columns
