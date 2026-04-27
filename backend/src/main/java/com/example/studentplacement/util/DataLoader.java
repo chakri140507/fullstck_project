@@ -1,8 +1,11 @@
 package com.example.studentplacement.util;
 
 import com.example.studentplacement.model.Job;
+import com.example.studentplacement.model.User;
 import com.example.studentplacement.repository.JobRepository;
+import com.example.studentplacement.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -12,14 +15,32 @@ import java.util.List;
 public class DataLoader implements CommandLineRunner {
 
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(JobRepository jobRepository) {
+    public DataLoader(JobRepository jobRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
-        // Only seed if the database is empty to avoid deleting existing work/applications
+        // 1. Seed Admin User if not exists
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setEmail("admin@portal.com");
+            admin.setFullName("System Administrator");
+            admin.setRole("ADMIN");
+            admin.setApproved(true);
+            admin.setAuthProvider("LOCAL");
+            userRepository.save(admin);
+            System.out.println("Seeded default Admin user (admin / admin123)");
+        }
+
+        // 2. Seed Jobs if empty
         if (jobRepository.count() > 0) {
             System.out.println("Job database already seeded. Skipping initialization.");
             return;
